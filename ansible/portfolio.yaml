@@ -1,0 +1,19 @@
+- name: CREATE PORTFOLIO WEBSITE
+  hosts: aws_ec2
+  tasks:
+    - name: Add a helm chart repository
+      become: true
+      kubernetes.core.helm_repository:
+        kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
+        repo_state: present
+        force_update: true
+    - name: Deploy latest version of Nginx chart
+      become: true
+      kubernetes.core.helm:
+        name: web-chart
+        kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+        chart_ref: bitnami/nginx
+        release_namespace: portfolio
+        create_namespace: true
