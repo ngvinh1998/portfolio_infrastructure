@@ -1,0 +1,6 @@
+aws_ec2:
+  hosts:
+    target_host:
+      ansible_connection: ssh
+      ansible_host: ec2-18-141-231-38.ap-southeast-1.compute.amazonaws.com
+      ansible_user: ubuntu

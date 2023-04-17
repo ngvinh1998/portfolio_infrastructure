@@ -1,0 +1,40 @@
+- name: SETUP PORTFOLIO HOST
+  hosts: aws_ec2
+  tasks:
+  - name: Install k3s as server
+    shell: "curl -sfL https://get.k3s.io | sh -"
+  - name: Make sure k3s service unit is running
+    become: true
+    ansible.builtin.systemd:
+      state: started
+      name: k3s
+  - name: install pip3
+    become: true
+    apt:
+      name: python3-pip
+      update_cache: yes
+      state: present 
+  - name: upgrade pip
+    become: true
+    pip:
+      name: pip
+      extra_args: --upgrade
+      executable: pip3
+  - name: install pre-requisites
+    become: true
+    ansible.builtin.pip:
+      name:
+      - openshift
+      - kubernetes
+      extra_args:  "--ignore-installed"
+  - name: Get Cluster node information
+    become: true
+    kubernetes.core.k8s_info:
+      kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+      kind: Node
+    register: node_list
+  - name: Print k3s nodes
+    ansible.builtin.debug:
+      msg: "Node: {{ node_list }}"
+  - name: Install Helmv3
+    shell: "curl -sfL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
