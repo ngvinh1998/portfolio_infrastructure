@@ -12,7 +12,7 @@
     become: true
     apt:
       name: python3-pip
-      update_cache: yes
+      #update_cache: yes
       state: present 
   - name: upgrade pip
     become: true
@@ -38,3 +38,9 @@
       msg: "Node: {{ node_list }}"
   - name: Install Helmv3
     shell: "curl -sfL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
+  - name: Install helm-s3 plugin
+    become: true
+    kubernetes.core.helm_plugin:
+      kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+      plugin_path: https://github.com/hypnoglow/helm-s3.git
+      state: present
